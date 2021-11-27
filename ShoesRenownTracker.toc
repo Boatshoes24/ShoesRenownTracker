@@ -1,0 +1,11 @@
+## Interface: 90105
+## Version: 1.0
+## Title: Shoes Renown Tracker
+## Notes: Tracks renown for all of your covenants.
+## Author: Boatshoes24
+## SavedVariables: ShoesRenownTrackerDB
+## OptionalDeps: Ace3
+## X-Embeds: Ace3
+
+embeds.xml
+ShoesRenownTracker.lua
