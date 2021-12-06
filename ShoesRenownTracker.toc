@@ -1,6 +1,6 @@
 ## Interface: 90105
 ## Version: 1.0
-## Title: Shoes Renown Tracker
+## Title: ShoesRenownTracker
 ## Notes: Tracks renown for all of your covenants.
 ## Author: Boatshoes24
 ## SavedVariables: ShoesRenownTrackerDB

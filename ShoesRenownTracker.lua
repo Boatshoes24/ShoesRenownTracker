@@ -1,4 +1,6 @@
-ShoesRenownTracker = LibStub("AceAddon-3.0"):NewAddon("ShoesRenownTracker", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0")
+local addonName, scope = ...
+
+local SRT = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0")
 
 local AceGUI = LibStub("AceGUI-3.0")
 local iconSize = 40
@@ -63,7 +65,7 @@ local function GetClassColor(class)
     return r, g, b
 end
 
-function ShoesRenownTracker:OnInitialize()
+function SRT:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("ShoesRenownTrackerDB", defaults, true)   
 
     self:RegisterEvent("PLAYER_LOGIN")
@@ -74,7 +76,7 @@ function ShoesRenownTracker:OnInitialize()
     self:RegisterChatCommand("srt", "SlashCommands")
 end
 
-function ShoesRenownTracker:SlashCommands(input)
+function SRT:SlashCommands(input)
     if #input ~= 0 then
         self:Print("No addtional options available. Use only /srt.")
     else
@@ -88,12 +90,13 @@ function ShoesRenownTracker:SlashCommands(input)
     end
 end
 
-function ShoesRenownTracker:PLAYER_LOGIN()
+function SRT:PLAYER_LOGIN()
 
     local covID = C_Covenants.GetActiveCovenantID()
     if covID == 0 then
         self:Print("No active covenant detected. Character skipped.")
     else
+        self.currTab = "renownTab"
         local charName, charRealm = GetCharName()
 
         self.currRealm = charRealm
@@ -116,7 +119,7 @@ function ShoesRenownTracker:PLAYER_LOGIN()
     end
 end
 
-function ShoesRenownTracker:PLAYER_CHOICE_UPDATE()
+function SRT:PLAYER_CHOICE_UPDATE()
     if _G.PlayerChoiceFrame:IsShown() then
         local charName, charRealm = GetCharName()
 
@@ -138,7 +141,7 @@ function ShoesRenownTracker:PLAYER_CHOICE_UPDATE()
     end
 end
 
-function ShoesRenownTracker:AddData(charName, charRealm)   
+function SRT:AddData(charName, charRealm)   
     local covenantData, renownLevel = GetCovenantInfo()         
     self.db.global.chars[charRealm][charName].covenants[covenantData.ID] = {
         name = covenantData.name,
@@ -146,7 +149,7 @@ function ShoesRenownTracker:AddData(charName, charRealm)
     }
 end
 
-function ShoesRenownTracker:GOSSIP_CONFIRM(event, _, gossipText)
+function SRT:GOSSIP_CONFIRM(event, _, gossipText)
     if gossipText:find("This path will lead to you leaving your current covenant") then
         local charName, charRealm = GetCharName()
         local covenantData, renownLevel = GetCovenantInfo()
@@ -154,7 +157,7 @@ function ShoesRenownTracker:GOSSIP_CONFIRM(event, _, gossipText)
     end
 end
 
-function ShoesRenownTracker:COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED(event, new, prev)
+function SRT:COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED(event, new, prev)
     C_Timer.After(1.5, function() 
         local charName, charRealm = GetCharName()
         local covenantData, renownLevel = GetCovenantInfo()
@@ -162,12 +165,12 @@ function ShoesRenownTracker:COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED(event, new, pr
     end)
 end
 
-function ShoesRenownTracker:COVENANT_CHOSEN(event, cov)
+function SRT:COVENANT_CHOSEN(event, cov)
     local charName, charRealm = GetCharName()
     self:AddData(charName, charRealm)
 end
 
-function ShoesRenownTracker:GetDropdownData()
+function SRT:GetDropdownData()
     local dropdownList = {}
     for realm, _ in pairs(self.db.global.chars) do
         table.insert(dropdownList, realm)
@@ -175,7 +178,40 @@ function ShoesRenownTracker:GetDropdownData()
     return dropdownList
 end
 
-AceGUI:RegisterLayout("ScrollFrameRows", function(content, children)
+AceGUI:RegisterLayout("RenownHeaderFrameRows", function(content, children)
+    if children[1] then
+        children[1]:SetWidth(120)
+        children[1].frame:ClearAllPoints()
+        children[1].frame:SetPoint("LEFT", content, "LEFT", 3, -5)
+        children[1].frame:Show()
+    end
+    if children[2] then
+        children[2]:SetWidth(60)
+        children[2].frame:ClearAllPoints()
+        children[2].frame:SetPoint("CENTER", content, "LEFT", 240, -5)
+        children[2].frame:Show()
+    end
+    if children[3] then
+        children[3]:SetWidth(60)
+        children[3].frame:ClearAllPoints()
+        children[3].frame:SetPoint("CENTER", content, "LEFT", 380, -5)
+        children[3].frame:Show()
+    end
+    if children[4] then
+        children[4]:SetWidth(60)
+        children[4].frame:ClearAllPoints()
+        children[4].frame:SetPoint("CENTER", content, "LEFT", 520, -5)
+        children[4].frame:Show()
+    end
+    if children[5] then
+        children[5]:SetWidth(60)
+        children[5].frame:ClearAllPoints()
+        children[5].frame:SetPoint("CENTER", content, "LEFT", 660, -5)
+        children[5].frame:Show()
+    end
+end)
+
+AceGUI:RegisterLayout("RenownScrollFrameRows", function(content, children)
     if children[1] then
         children[1]:SetWidth(120)
         children[1].frame:ClearAllPoints()
@@ -185,33 +221,31 @@ AceGUI:RegisterLayout("ScrollFrameRows", function(content, children)
     if children[2] then
         children[2]:SetWidth(60)
         children[2].frame:ClearAllPoints()
-        children[2].frame:SetPoint("LEFT", content, "LEFT", 210, -2)
+        children[2].frame:SetPoint("CENTER", content, "LEFT", 232, -2)
         children[2].frame:Show()
     end
     if children[3] then
         children[3]:SetWidth(60)
         children[3].frame:ClearAllPoints()
-        children[3].frame:SetPoint("LEFT", content, "LEFT", 320, -2)
+        children[3].frame:SetPoint("CENTER", content, "LEFT", 372, -2)
         children[3].frame:Show()
     end
     if children[4] then
         children[4]:SetWidth(60)
         children[4].frame:ClearAllPoints()
-        children[4].frame:SetPoint("LEFT", content, "LEFT", 430, -2)
+        children[4].frame:SetPoint("CENTER", content, "LEFT", 512, -2)
         children[4].frame:Show()
     end
     if children[5] then
         children[5]:SetWidth(60)
         children[5].frame:ClearAllPoints()
-        children[5].frame:SetPoint("LEFT", content, "LEFT", 540, -2)
+        children[5].frame:SetPoint("CENTER", content, "LEFT", 653, -2)
         children[5].frame:Show()
     end
 end)
 
-function ShoesRenownTracker:GetScrollData()
-    local scrollContainer = AceGUI:Create("ScrollFrame")
-    scrollContainer:SetLayout("Flow")
-    scrollContainer:PauseLayout()
+function SRT:GetScrollData()
+    local scrollFrame = AceGUI:Create("ScrollFrame")
     --[[
         covenant ids
         1 - Kyrian
@@ -263,17 +297,80 @@ function ShoesRenownTracker:GetScrollData()
             end
             charFrame:AddChild(covBtn)
         end
-        charFrame:SetLayout("ScrollFrameRows")
+        charFrame:SetLayout("RenownScrollFrameRows")
         charFrame:SetFullWidth(true)
         charFrame:SetHeight(26)  
-        scrollContainer:AddChild(charFrame)
+        scrollFrame:AddChild(charFrame)
     end
-    scrollContainer:ResumeLayout()
-    scrollContainer:DoLayout()
-    return scrollContainer
+    scrollFrame:SetFullWidth(true)
+    scrollFrame:SetLayout("Flow")
+    return scrollFrame
 end
 
-function ShoesRenownTracker:OpenWindow()
+local function DrawRenownGroup(container)
+    container:PauseLayout()
+    local renownGroup = AceGUI:Create("SimpleGroup")
+    
+    local blankLabel = AceGUI:Create("Label")
+    blankLabel:SetText(" ")
+
+    local kyrianIcon = AceGUI:Create("Icon")
+    kyrianIcon:SetImage(3257748)
+    kyrianIcon:SetImageSize(iconSize, iconSize)
+    kyrianIcon:SetLabel("Kyrian")
+
+    local venthyrIcon = AceGUI:Create("Icon")
+    venthyrIcon:SetImage(3257751)
+    venthyrIcon:SetImageSize(iconSize, iconSize)
+    venthyrIcon:SetLabel("Venthyr")
+
+    local faeIcon = AceGUI:Create("Icon")
+    faeIcon:SetImage(3257750)
+    faeIcon:SetImageSize(iconSize, iconSize)
+    faeIcon:SetLabel("Night Fae")
+
+    local necroIcon = AceGUI:Create("Icon")
+    necroIcon:SetImage(3257749)
+    necroIcon:SetImageSize(iconSize, iconSize)
+    necroIcon:SetLabel("Necrolord")
+
+    
+
+    
+    local scrollContainer = AceGUI:Create("InlineGroup")
+    scrollContainer:SetFullWidth(true)
+    scrollContainer:SetFullHeight(true)
+    scrollContainer:SetLayout("Fill")
+
+    local scroll = SRT:GetScrollData()
+    scrollContainer:AddChild(scroll)
+
+    renownGroup:AddChild(blankLabel)
+    renownGroup:AddChild(kyrianIcon)
+    renownGroup:AddChild(venthyrIcon)
+    renownGroup:AddChild(faeIcon)
+    renownGroup:AddChild(necroIcon)
+    renownGroup:SetFullWidth(true)
+    renownGroup:SetHeight(iconSize)
+    renownGroup.frame:ClearBackdrop()
+    renownGroup:SetLayout("RenownHeaderFrameRows")
+
+    container:AddChild(renownGroup)
+    container:AddChild(scrollContainer)
+    container:ResumeLayout()
+    container:DoLayout()
+    
+end
+
+local function SelectGroup(container, event, group)
+    container:ReleaseChildren()
+    if group == "renownTab" then
+        DrawRenownGroup(container)
+    end
+    SRT.currTab = group
+end
+
+function SRT:OpenWindow()
     self.container = AceGUI:Create("Frame")
     self.container:SetCallback("OnClose", function(widget)
         AceGUI:Release(widget)
@@ -281,61 +378,41 @@ function ShoesRenownTracker:OpenWindow()
         local charName, charRealm = GetCharName()
         self.currRealm = charRealm
     end)
-    self.container:SetTitle("Shoes Renown Tracker")
+    self.container:SetTitle("Shoes Renown Tracker - Dev")
     self.container:SetLayout("Flow") 
+    self.container:SetHeight(600)
+    self.container:SetWidth(800)
     self.container:EnableResize(false)  
 
     self.nameRow = AceGUI:Create("Dropdown")
     self.nameRow:SetLabel("Realm")
     self.nameRow:SetText(self.currRealm)
     self.nameRow:SetList(self:GetDropdownData())
-    self.nameRow:SetRelativeWidth(0.3)
     self.nameRow:SetCallback("OnValueChanged", function(valueTable) 
         self.currRealm = valueTable.text:GetText()
-        self.scrollContainer:ReleaseChildren()
-        self.scroll = self:GetScrollData()
-        self.scrollContainer:AddChild(self.scroll)
+        SelectGroup(self.tabGroup, nil, self.currTab)
     end)
 
-    self.kyrianIcon = AceGUI:Create("Icon")
-    self.kyrianIcon:SetImage(3257748)
-    self.kyrianIcon:SetImageSize(iconSize, iconSize)
-    self.kyrianIcon:SetLabel("Kyrian")
-
-    self.venthyrIcon = AceGUI:Create("Icon")
-    self.venthyrIcon:SetImage(3257751)
-    self.venthyrIcon:SetImageSize(iconSize, iconSize)
-    self.venthyrIcon:SetLabel("Venthyr")
-
-    self.faeIcon = AceGUI:Create("Icon")
-    self.faeIcon:SetImage(3257750)
-    self.faeIcon:SetImageSize(iconSize, iconSize)
-    self.faeIcon:SetLabel("Night Fae")
-
-    self.necroIcon = AceGUI:Create("Icon")
-    self.necroIcon:SetImage(3257749)
-    self.necroIcon:SetImageSize(iconSize, iconSize)
-    self.necroIcon:SetLabel("Necrolord")
-
     self.container:AddChild(self.nameRow)
-    self.container:AddChild(self.kyrianIcon)
-    self.container:AddChild(self.venthyrIcon)
-    self.container:AddChild(self.faeIcon)
-    self.container:AddChild(self.necroIcon)
-
-    self.container:PauseLayout()
     
-    self.scrollContainer = AceGUI:Create("InlineGroup")
-    self.scrollContainer:SetFullWidth(true)
-    self.scrollContainer:SetFullHeight(false)
-    self.scrollContainer:SetHeight(320)
-    self.scrollContainer:SetLayout("Fill")
-    self.container:AddChild(self.scrollContainer)
-    
-    self.scroll = self:GetScrollData()
-    self.scrollContainer:AddChild(self.scroll)
 
-    self.container:ResumeLayout()
-    self.container:DoLayout()
+    self.tabGroup = AceGUI:Create("TabGroup")
+    self.tabGroup:SetLayout("Flow")
+    self.tabGroup:SetFullWidth(true)
+    self.tabGroup:SetAutoAdjustHeight(false)
+    self.tabGroup:SetHeight(480)
+    self.tabGroup:SetTabs({
+        {text="Renown", value="renownTab"},
+        {text="M+ Fort", value="fortifiedTab"},
+        {text="M+ Tyr", value="tyrannicalTab"}
+    })
+    
+    self.tabGroup:SetCallback("OnGroupSelected", SelectGroup)
+    self.tabGroup:SelectTab("renownTab") 
+    
+
+
+    self.container:AddChild(self.tabGroup)
+
     isOpen = true
 end
