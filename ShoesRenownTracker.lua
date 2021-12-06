@@ -6,6 +6,23 @@ local AceGUI = LibStub("AceGUI-3.0")
 local iconSize = 40
 local isOpen = false
 
+local COVENANT_COLORS = _G.COVENANT_COLORS
+local RAID_CLASS_COLORS = _G.RAID_CLASS_COLORS
+
+
+local dungeonData = {
+    {id = 381, name = "SOA", color = {COVENANT_COLORS[1]:GetRGB()}},
+    {id = 376, name = "NW", color = {COVENANT_COLORS[1]:GetRGB()}},
+    {id = 378, name = "HOA", color = {COVENANT_COLORS[2]:GetRGB()}},
+    {id = 380, name = "SD", color = {COVENANT_COLORS[2]:GetRGB()}},
+    {id = 375, name = "MOTS", color = {COVENANT_COLORS[3]:GetRGB()}},    
+    {id = 377, name = "DOS", color = {COVENANT_COLORS[3]:GetRGB()}},    
+    {id = 379, name = "PF", color = {COVENANT_COLORS[4]:GetRGB()}},    
+    {id = 382, name = "TOP", color = {COVENANT_COLORS[4]:GetRGB()}},
+    {id = 391, name = "TAZ1", color = {1, 1, 0}},
+    {id = 392, name = "TAZ2", color = {1, 1, 0}}
+}
+
 local defaults = {
     global = {
         chars = {},
@@ -70,8 +87,18 @@ local characterDefaults = {
         [382] = {
             ["fortified"] = "N/A",
             ["tyrannical"] = "N/A",
-            ["name"] = "top"
-        }
+            ["name"] = "TOP"
+        },
+        [391] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "TAZ1"
+        },
+        [392] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "TAZ2"
+        },
     },
     ["class"] = "N/A"    
 }
@@ -96,14 +123,12 @@ local function GetCovenantInfo()
 end
 
 local function GetCovenantColorCode(id)
-    local covColorTable = _G.COVENANT_COLORS
-    local r, g, b = covColorTable[id]:GetRGB()
+    local r, g, b = COVENANT_COLORS[id]:GetRGB()
     return r, g, b
 end
 
 local function GetClassColor(class)
-    local classColorTable = _G.RAID_CLASS_COLORS
-    local r, g, b = classColorTable[class]:GetRGB()
+    local r, g, b = RAID_CLASS_COLORS[class]:GetRGB()
     return r, g, b
 end
 
@@ -220,35 +245,288 @@ function SRT:GetDropdownData()
     return dropdownList
 end
 
+AceGUI:RegisterLayout("MPlusHeaderFrameRows", function(content, children)
+    if children[1] then
+        children[1]:SetWidth(120)
+        children[1].frame:ClearAllPoints()
+        children[1].frame:SetPoint("LEFT", content, "LEFT", 3, -2)
+        children[1].frame:Show()
+    end
+    if children[2] then
+        children[2]:SetWidth(50)
+        children[2].frame:ClearAllPoints()
+        children[2].frame:SetPoint("LEFT", content, "LEFT", 135, -2)
+        children[2].frame:Show()
+    end
+    if children[3] then
+        children[3]:SetWidth(50)
+        children[3].frame:ClearAllPoints()
+        children[3].frame:SetPoint("LEFT", content, "LEFT", 194, -2)
+        children[3].frame:Show()
+    end
+    if children[4] then
+        children[4]:SetWidth(50)
+        children[4].frame:ClearAllPoints()
+        children[4].frame:SetPoint("LEFT", content, "LEFT", 253, -2)
+        children[4].frame:Show()
+    end
+    if children[5] then
+        children[5]:SetWidth(50)
+        children[5].frame:ClearAllPoints()
+        children[5].frame:SetPoint("LEFT", content, "LEFT", 312, -2)
+        children[5].frame:Show()
+    end
+    if children[6] then
+        children[6]:SetWidth(50)
+        children[6].frame:ClearAllPoints()
+        children[6].frame:SetPoint("LEFT", content, "LEFT", 371, -2)
+        children[6].frame:Show()
+    end
+    if children[7] then
+        children[7]:SetWidth(50)
+        children[7].frame:ClearAllPoints()
+        children[7].frame:SetPoint("LEFT", content, "LEFT", 430, -2)
+        children[7].frame:Show()
+    end
+    if children[8] then
+        children[8]:SetWidth(50)
+        children[8].frame:ClearAllPoints()
+        children[8].frame:SetPoint("LEFT", content, "LEFT", 489, -2)
+        children[8].frame:Show()
+    end
+    if children[9] then
+        children[9]:SetWidth(50)
+        children[9].frame:ClearAllPoints()
+        children[9].frame:SetPoint("LEFT", content, "LEFT", 548, -2)
+        children[9].frame:Show()
+    end
+    if children[10] then
+        children[10]:SetWidth(50)
+        children[10].frame:ClearAllPoints()
+        children[10].frame:SetPoint("LEFT", content, "LEFT", 607, -2)
+        children[10].frame:Show()
+    end
+    if children[11] then
+        children[11]:SetWidth(50)
+        children[11].frame:ClearAllPoints()
+        children[11].frame:SetPoint("LEFT", content, "LEFT", 666, -2)
+        children[11].frame:Show()
+    end
+end)
+
+AceGUI:RegisterLayout("MPlusScrollFrameRows", function(content, children)
+    if children[1] then
+        children[1]:SetWidth(120)
+        children[1].frame:ClearAllPoints()
+        children[1].frame:SetPoint("LEFT", content, "LEFT", 3, -2)
+        children[1].frame:Show()
+    end
+    if children[2] then
+        children[2]:SetWidth(50)
+        children[2].frame:ClearAllPoints()
+        children[2].frame:SetPoint("LEFT", content, "LEFT", 130, -2)
+        children[2].frame:Show()
+    end
+    if children[3] then
+        children[3]:SetWidth(50)
+        children[3].frame:ClearAllPoints()
+        children[3].frame:SetPoint("LEFT", content, "LEFT", 189, -2)
+        children[3].frame:Show()
+    end
+    if children[4] then
+        children[4]:SetWidth(50)
+        children[4].frame:ClearAllPoints()
+        children[4].frame:SetPoint("LEFT", content, "LEFT", 248, -2)
+        children[4].frame:Show()
+    end
+    if children[5] then
+        children[5]:SetWidth(50)
+        children[5].frame:ClearAllPoints()
+        children[5].frame:SetPoint("LEFT", content, "LEFT", 307, -2)
+        children[5].frame:Show()
+    end
+    if children[6] then
+        children[6]:SetWidth(50)
+        children[6].frame:ClearAllPoints()
+        children[6].frame:SetPoint("LEFT", content, "LEFT", 366, -2)
+        children[6].frame:Show()
+    end
+    if children[7] then
+        children[7]:SetWidth(50)
+        children[7].frame:ClearAllPoints()
+        children[7].frame:SetPoint("LEFT", content, "LEFT", 425, -2)
+        children[7].frame:Show()
+    end
+    if children[8] then
+        children[8]:SetWidth(50)
+        children[8].frame:ClearAllPoints()
+        children[8].frame:SetPoint("LEFT", content, "LEFT", 484, -2)
+        children[8].frame:Show()
+    end
+    if children[9] then
+        children[9]:SetWidth(50)
+        children[9].frame:ClearAllPoints()
+        children[9].frame:SetPoint("LEFT", content, "LEFT", 543, -2)
+        children[9].frame:Show()
+    end
+    if children[10] then
+        children[10]:SetWidth(50)
+        children[10].frame:ClearAllPoints()
+        children[10].frame:SetPoint("LEFT", content, "LEFT", 602, -2)
+        children[10].frame:Show()
+    end
+    if children[11] then
+        children[11]:SetWidth(50)
+        children[11].frame:ClearAllPoints()
+        children[11].frame:SetPoint("LEFT", content, "LEFT", 661, -2)
+        children[11].frame:Show()
+    end
+end)
+
+function SRT:GetMPlusData(flag)
+    local scrollFrame = AceGUI:Create("ScrollFrame")
+    scrollFrame:PauseLayout()
+
+    local sorted = {}
+    for k, v in pairs(self.db.global.chars[self.currRealm]) do
+        local temp = {char = k, data = v}
+        table.insert(sorted, temp)
+    end
+    table.sort(sorted, function(a, b) 
+        return a.char < b.char
+    end)
+  
+    for idx, charTable in ipairs(sorted) do
+        local charFrame = AceGUI:Create("SimpleGroup")
+        local r, g, b = GetClassColor(charTable.data.class)
+
+        charFrame.highlight = charFrame.frame:CreateTexture()
+        charFrame.highlight:SetTexture([[Interface\Buttons\WHITE8X8]])
+        charFrame.highlight:SetVertexColor(r, g, b, 0.1)
+        charFrame.highlight:SetAllPoints(true)
+        --charFrame.highlight:SetTexture("Interface\\AddOns\\WeakAuras\\Media\\Textures\\Square_White")        
+        charFrame.frame:SetScript("OnEnter", function() charFrame.highlight:Show() end)
+        charFrame.frame:SetScript("OnLeave", function() charFrame.highlight:Hide() end)
+
+        local charHeading = AceGUI:Create("Label")
+        charHeading:SetText(charTable.char)        
+        charHeading:SetColor(r, g, b)
+        charHeading:SetJustifyH("LEFT")
+        charHeading:SetJustifyV("MIDDLE")
+        charHeading:SetFont(_G.STANDARD_TEXT_FONT, 14)
+        
+        charFrame:AddChild(charHeading)
+        for k, v in ipairs(dungeonData) do
+            --local cr, cg, cb = GetCovenantColorCode(i)
+            local keyLevelLabel = AceGUI:Create("Label")
+            if flag == "fortified" then
+                keyLevelLabel:SetText(charTable.data.mplus[v.id].fortified)
+                keyLevelLabel:SetJustifyH("CENTER")
+                keyLevelLabel:SetJustifyV("MIDDLE")
+                keyLevelLabel:SetFont(_G.STANDARD_TEXT_FONT, 14)
+                if charTable.data.mplus[v.id].fortified ~= "N/A" then
+                    keyLevelLabel:SetColor(1, 1, 1)
+                else
+                    keyLevelLabel:SetColor(0.3, 0.3, 0.3)
+                end
+            elseif flag == "tyrannical" then
+                keyLevelLabel:SetText(charTable.data.mplus[v.id].tyrannical)
+                keyLevelLabel:SetJustifyH("CENTER")
+                keyLevelLabel:SetJustifyV("MIDDLE")
+                keyLevelLabel:SetFont(_G.STANDARD_TEXT_FONT, 14)
+                if charTable.data.mplus[v.id].tyrannical ~= "N/A" then
+                    keyLevelLabel:SetColor(1, 1, 1)
+                else
+                    keyLevelLabel:SetColor(0.3, 0.3, 0.3)
+                end
+            end
+            charFrame:AddChild(keyLevelLabel)
+        end
+        charFrame.highlight:Hide()
+        charFrame:SetLayout("MPlusScrollFrameRows")
+        charFrame:SetFullWidth(true)
+        charFrame:SetHeight(26)  
+        scrollFrame:AddChild(charFrame)
+    end
+    scrollFrame:SetFullWidth(true)
+    scrollFrame:SetLayout("Flow")
+    scrollFrame:ResumeLayout()
+    scrollFrame:DoLayout()
+    return scrollFrame
+end
+
+local function DrawMPlusGroup(container, flag)    
+    local mplusHeader = AceGUI:Create("InlineGroup")
+    container:PauseLayout()   
+    
+    local blankLabel = AceGUI:Create("Label")
+    blankLabel:SetText(" ")
+    blankLabel:SetJustifyH("CENTER")
+    blankLabel:SetJustifyV("MIDDLE")
+    mplusHeader:AddChild(blankLabel)
+
+    for k, v in ipairs(dungeonData) do
+        local mplusLabel = AceGUI:Create("Label")
+        mplusLabel:SetText(v.name)        
+        mplusLabel:SetColor(unpack(v.color))
+        mplusLabel:SetJustifyH("CENTER")
+        mplusLabel:SetJustifyV("MIDDLE")
+        mplusLabel:SetFont(_G.STANDARD_TEXT_FONT, 14)
+        mplusHeader:AddChild(mplusLabel)
+    end
+    
+    local scrollContainer = AceGUI:Create("InlineGroup")
+    scrollContainer:SetFullWidth(true)
+    scrollContainer:SetFullHeight(true)
+    scrollContainer:SetLayout("Fill")
+
+    local scroll = SRT:GetMPlusData(flag)
+    scrollContainer:AddChild(scroll)
+
+    mplusHeader:SetFullWidth(true)
+    mplusHeader:SetHeight(10) 
+    mplusHeader:SetLayout("MPlusHeaderFrameRows")
+
+    for i = 1, mplusHeader.frame:GetNumChildren() do
+        local child = select(i, mplusHeader.frame:GetChildren())
+        child:ClearBackdrop()
+    end
+
+    container:AddChild(mplusHeader)
+    container:AddChild(scrollContainer)
+    container:ResumeLayout()
+    container:DoLayout()    
+end
+
 AceGUI:RegisterLayout("RenownHeaderFrameRows", function(content, children)
     if children[1] then
         children[1]:SetWidth(120)
         children[1].frame:ClearAllPoints()
-        children[1].frame:SetPoint("LEFT", content, "LEFT", 3, -5)
+        children[1].frame:SetPoint("LEFT", content, "LEFT", 3, 3)
         children[1].frame:Show()
     end
     if children[2] then
         children[2]:SetWidth(60)
         children[2].frame:ClearAllPoints()
-        children[2].frame:SetPoint("CENTER", content, "LEFT", 240, -5)
+        children[2].frame:SetPoint("LEFT", content, "LEFT", 237, 3)
         children[2].frame:Show()
     end
     if children[3] then
         children[3]:SetWidth(60)
         children[3].frame:ClearAllPoints()
-        children[3].frame:SetPoint("CENTER", content, "LEFT", 380, -5)
+        children[3].frame:SetPoint("LEFT", content, "LEFT", 377, 3)
         children[3].frame:Show()
     end
     if children[4] then
         children[4]:SetWidth(60)
         children[4].frame:ClearAllPoints()
-        children[4].frame:SetPoint("CENTER", content, "LEFT", 520, -5)
+        children[4].frame:SetPoint("LEFT", content, "LEFT", 517, 3)
         children[4].frame:Show()
     end
     if children[5] then
         children[5]:SetWidth(60)
         children[5].frame:ClearAllPoints()
-        children[5].frame:SetPoint("CENTER", content, "LEFT", 660, -5)
+        children[5].frame:SetPoint("LEFT", content, "LEFT", 658, 3)
         children[5].frame:Show()
     end
 end)
@@ -263,146 +541,28 @@ AceGUI:RegisterLayout("RenownScrollFrameRows", function(content, children)
     if children[2] then
         children[2]:SetWidth(60)
         children[2].frame:ClearAllPoints()
-        children[2].frame:SetPoint("CENTER", content, "LEFT", 232, -2)
+        children[2].frame:SetPoint("LEFT", content, "LEFT", 232, -2)
         children[2].frame:Show()
     end
     if children[3] then
         children[3]:SetWidth(60)
         children[3].frame:ClearAllPoints()
-        children[3].frame:SetPoint("CENTER", content, "LEFT", 372, -2)
+        children[3].frame:SetPoint("LEFT", content, "LEFT", 372, -2)
         children[3].frame:Show()
     end
     if children[4] then
         children[4]:SetWidth(60)
         children[4].frame:ClearAllPoints()
-        children[4].frame:SetPoint("CENTER", content, "LEFT", 512, -2)
+        children[4].frame:SetPoint("LEFT", content, "LEFT", 512, -2)
         children[4].frame:Show()
     end
     if children[5] then
         children[5]:SetWidth(60)
         children[5].frame:ClearAllPoints()
-        children[5].frame:SetPoint("CENTER", content, "LEFT", 653, -2)
+        children[5].frame:SetPoint("LEFT", content, "LEFT", 653, -2)
         children[5].frame:Show()
     end
 end)
-
-function SRT:GetFortifiedData()
-    local scrollFrame = AceGUI:Create("ScrollFrame")
-    scrollFrame:PauseLayout()
-    --[[
-        covenant ids
-        1 - Kyrian
-        2 - Venthyr
-        3 - Night Fae
-        4 - Necrolord
-    ]]--
-    local sorted = {}
-    for k, v in pairs(self.db.global.chars[self.currRealm]) do
-        local temp = {char = k, data = v}
-        table.insert(sorted, temp)
-    end
-    table.sort(sorted, function(a, b) 
-        return a.char < b.char
-    end)
-  
-    for idx, charTable in ipairs(sorted) do
-        local charFrame = AceGUI:Create("SimpleGroup")
-        local r, g, b = GetClassColor(charTable.data.class)
-
-        charFrame.highlight = charFrame.frame:CreateTexture(nil, "BACKGROUND")
-        charFrame.highlight:SetAllPoints(true)
-        --charFrame.highlight:SetTexture("Interface\\AddOns\\WeakAuras\\Media\\Textures\\Square_White")
-        charFrame.highlight:SetTexture([[Interface\Buttons\WHITE8X8]])
-        charFrame.highlight:SetVertexColor(r, g, b, 0.1)
-        charFrame.highlight:Hide()
-        charFrame.frame:SetScript("OnEnter", function() charFrame.highlight:Show() end)
-        charFrame.frame:SetScript("OnLeave", function() charFrame.highlight:Hide() end)
-
-        local charHeading = AceGUI:Create("Label")
-        charHeading:SetText(charTable.char)        
-        charHeading:SetColor(r, g, b)
-        charHeading:SetJustifyH("LEFT")
-        charHeading:SetJustifyV("CENTER")
-        charHeading:SetFont(_G.STANDARD_TEXT_FONT, 14)
-        
-        charFrame:AddChild(charHeading)
-        for i = 375, 382 do
-            --local cr, cg, cb = GetCovenantColorCode(i)
-            local covBtn = AceGUI:Create("Label")
-            covBtn:SetText(charTable.data.mplus[i].fortified)
-            covBtn:SetJustifyH("MIDDLE")
-            covBtn:SetJustifyV("CENTER")
-            covBtn:SetFont(_G.STANDARD_TEXT_FONT, 14)
-            if charTable.data.mplus[i].fortified ~= "N/A" then
-                covBtn:SetColor(1, 1, 1)
-            else
-                covBtn:SetColor(0.3, 0.3, 0.3)
-            end
-            charFrame:AddChild(covBtn)
-        end
-        charFrame:SetLayout("Flow")
-        charFrame:SetFullWidth(true)
-        charFrame:SetHeight(26)  
-        scrollFrame:AddChild(charFrame)
-    end
-    scrollFrame:SetFullWidth(true)
-    scrollFrame:SetLayout("Flow")
-    scrollFrame:ResumeLayout()
-    scrollFrame:DoLayout()
-    return scrollFrame
-end
-
-local function DrawFortifiedGroup(container)    
-    local renownGroup = AceGUI:Create("SimpleGroup")
-    renownGroup.frame:ClearBackdrop()
-    container:PauseLayout()
-    
-    local blankLabel = AceGUI:Create("Label")
-    blankLabel:SetText(" ")
-
-    local kyrianIcon = AceGUI:Create("Icon")
-    kyrianIcon:SetImage(3257748)
-    kyrianIcon:SetImageSize(iconSize, iconSize)
-    kyrianIcon:SetLabel("Kyrian")
-
-    local venthyrIcon = AceGUI:Create("Icon")
-    venthyrIcon:SetImage(3257751)
-    venthyrIcon:SetImageSize(iconSize, iconSize)
-    venthyrIcon:SetLabel("Venthyr")
-
-    local faeIcon = AceGUI:Create("Icon")
-    faeIcon:SetImage(3257750)
-    faeIcon:SetImageSize(iconSize, iconSize)
-    faeIcon:SetLabel("Night Fae")
-
-    local necroIcon = AceGUI:Create("Icon")
-    necroIcon:SetImage(3257749)
-    necroIcon:SetImageSize(iconSize, iconSize)
-    necroIcon:SetLabel("Necrolord")
-    
-    local scrollContainer = AceGUI:Create("InlineGroup")
-    scrollContainer:SetFullWidth(true)
-    scrollContainer:SetFullHeight(true)
-    scrollContainer:SetLayout("Fill")
-
-    local scroll = SRT:GetFortifiedData()
-    scrollContainer:AddChild(scroll)
-
-    renownGroup:AddChild(blankLabel)
-    renownGroup:AddChild(kyrianIcon)
-    renownGroup:AddChild(venthyrIcon)
-    renownGroup:AddChild(faeIcon)
-    renownGroup:AddChild(necroIcon)
-    renownGroup:SetFullWidth(true)
-    renownGroup:SetHeight(iconSize)
-
-    renownGroup:SetLayout("RenownHeaderFrameRows")
-
-    container:AddChild(renownGroup)
-    container:AddChild(scrollContainer)
-    container:ResumeLayout()
-    container:DoLayout()    
-end
 
 function SRT:GetRenownData()
     local scrollFrame = AceGUI:Create("ScrollFrame")
@@ -432,7 +592,6 @@ function SRT:GetRenownData()
         --charFrame.highlight:SetTexture("Interface\\AddOns\\WeakAuras\\Media\\Textures\\Square_White")
         charFrame.highlight:SetTexture([[Interface\Buttons\WHITE8X8]])
         charFrame.highlight:SetVertexColor(r, g, b, 0.1)
-        charFrame.highlight:Hide()
         charFrame.frame:SetScript("OnEnter", function() charFrame.highlight:Show() end)
         charFrame.frame:SetScript("OnLeave", function() charFrame.highlight:Hide() end)
 
@@ -448,8 +607,8 @@ function SRT:GetRenownData()
             local cr, cg, cb = GetCovenantColorCode(i)
             local covBtn = AceGUI:Create("Label")
             covBtn:SetText(charTable.data.covenants[i].renown)
-            covBtn:SetJustifyH("MIDDLE")
-            covBtn:SetJustifyV("CENTER")
+            covBtn:SetJustifyH("CENTER")
+            covBtn:SetJustifyV("MIDDLE")
             covBtn:SetFont(_G.STANDARD_TEXT_FONT, 14)
             if charTable.data.covenants[i].renown ~= "N/A" then
                 covBtn:SetColor(cr, cg, cb)
@@ -458,6 +617,7 @@ function SRT:GetRenownData()
             end
             charFrame:AddChild(covBtn)
         end
+        charFrame.highlight:Hide()
         charFrame:SetLayout("RenownScrollFrameRows")
         charFrame:SetFullWidth(true)
         charFrame:SetHeight(26)  
@@ -471,32 +631,38 @@ function SRT:GetRenownData()
 end
 
 local function DrawRenownGroup(container)    
-    local renownGroup = AceGUI:Create("SimpleGroup")
-    renownGroup.frame:ClearBackdrop()
+    local renownHeader = AceGUI:Create("InlineGroup")
     container:PauseLayout()
     
     local blankLabel = AceGUI:Create("Label")
     blankLabel:SetText(" ")
+    blankLabel:SetJustifyH("CENTER")
+    blankLabel:SetJustifyV("MIDDLE")
+    renownHeader:AddChild(blankLabel)
 
     local kyrianIcon = AceGUI:Create("Icon")
     kyrianIcon:SetImage(3257748)
     kyrianIcon:SetImageSize(iconSize, iconSize)
     kyrianIcon:SetLabel("Kyrian")
+    kyrianIcon.label:SetTextColor(COVENANT_COLORS[1]:GetRGB())
 
     local venthyrIcon = AceGUI:Create("Icon")
     venthyrIcon:SetImage(3257751)
     venthyrIcon:SetImageSize(iconSize, iconSize)
     venthyrIcon:SetLabel("Venthyr")
+    venthyrIcon.label:SetTextColor(COVENANT_COLORS[2]:GetRGB())
 
     local faeIcon = AceGUI:Create("Icon")
     faeIcon:SetImage(3257750)
     faeIcon:SetImageSize(iconSize, iconSize)
     faeIcon:SetLabel("Night Fae")
+    faeIcon.label:SetTextColor(COVENANT_COLORS[3]:GetRGB())
 
     local necroIcon = AceGUI:Create("Icon")
     necroIcon:SetImage(3257749)
     necroIcon:SetImageSize(iconSize, iconSize)
     necroIcon:SetLabel("Necrolord")
+    necroIcon.label:SetTextColor(COVENANT_COLORS[4]:GetRGB())
     
     local scrollContainer = AceGUI:Create("InlineGroup")
     scrollContainer:SetFullWidth(true)
@@ -506,17 +672,22 @@ local function DrawRenownGroup(container)
     local scroll = SRT:GetRenownData()
     scrollContainer:AddChild(scroll)
 
-    renownGroup:AddChild(blankLabel)
-    renownGroup:AddChild(kyrianIcon)
-    renownGroup:AddChild(venthyrIcon)
-    renownGroup:AddChild(faeIcon)
-    renownGroup:AddChild(necroIcon)
-    renownGroup:SetFullWidth(true)
-    renownGroup:SetHeight(iconSize)
+  
+    renownHeader:AddChild(kyrianIcon)
+    renownHeader:AddChild(venthyrIcon)
+    renownHeader:AddChild(faeIcon)
+    renownHeader:AddChild(necroIcon)
 
-    renownGroup:SetLayout("RenownHeaderFrameRows")
+    renownHeader:SetFullWidth(true)
+    renownHeader:SetHeight(iconSize)
+    renownHeader:SetLayout("RenownHeaderFrameRows")
 
-    container:AddChild(renownGroup)
+    for i = 1, renownHeader.frame:GetNumChildren() do
+        local child = select(i, renownHeader.frame:GetChildren())
+        child:ClearBackdrop()
+    end
+
+    container:AddChild(renownHeader)
     container:AddChild(scrollContainer)
     container:ResumeLayout()
     container:DoLayout()    
@@ -527,7 +698,9 @@ local function SelectGroup(container, event, group)
     if group == "renownTab" then
         DrawRenownGroup(container)
     elseif group == "fortifiedTab" then
-        DrawFortifiedGroup(container)
+        DrawMPlusGroup(container, "fortified")
+    elseif group == "tyrannicalTab" then
+        DrawMPlusGroup(container, "tyrannical")
     end
     SRT.currTab = group
 end
@@ -555,6 +728,7 @@ function SRT:OpenWindow()
     self.nameRow:SetCallback("OnValueChanged", function(valueTable, null, value)
         self.currRealm = valueTable.text:GetText()
         self.nameRow:SetValue(value)
+        self.tabGroup:ReleaseChildren()
         SelectGroup(self.tabGroup, nil, self.currTab)
     end)
  
