@@ -31,6 +31,48 @@ local characterDefaults = {
             ["renown"] = "N/A"
         }
     },
+    ["mplus"] = {
+        [377] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "DOS"
+        },
+        [378] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "HOA"
+        },
+        [375] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "MOTS"
+        },
+        [379] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "PF"
+        },
+        [380] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "SD"
+        },
+        [381] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "SOA"
+        },
+        [376] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "NW"
+        },
+        [382] = {
+            ["fortified"] = "N/A",
+            ["tyrannical"] = "N/A",
+            ["name"] = "top"
+        }
+    },
     ["class"] = "N/A"    
 }
 
@@ -244,8 +286,127 @@ AceGUI:RegisterLayout("RenownScrollFrameRows", function(content, children)
     end
 end)
 
-function SRT:GetScrollData()
+function SRT:GetFortifiedData()
     local scrollFrame = AceGUI:Create("ScrollFrame")
+    scrollFrame:PauseLayout()
+    --[[
+        covenant ids
+        1 - Kyrian
+        2 - Venthyr
+        3 - Night Fae
+        4 - Necrolord
+    ]]--
+    local sorted = {}
+    for k, v in pairs(self.db.global.chars[self.currRealm]) do
+        local temp = {char = k, data = v}
+        table.insert(sorted, temp)
+    end
+    table.sort(sorted, function(a, b) 
+        return a.char < b.char
+    end)
+  
+    for idx, charTable in ipairs(sorted) do
+        local charFrame = AceGUI:Create("SimpleGroup")
+        local r, g, b = GetClassColor(charTable.data.class)
+
+        charFrame.highlight = charFrame.frame:CreateTexture(nil, "BACKGROUND")
+        charFrame.highlight:SetAllPoints(true)
+        --charFrame.highlight:SetTexture("Interface\\AddOns\\WeakAuras\\Media\\Textures\\Square_White")
+        charFrame.highlight:SetTexture([[Interface\Buttons\WHITE8X8]])
+        charFrame.highlight:SetVertexColor(r, g, b, 0.1)
+        charFrame.highlight:Hide()
+        charFrame.frame:SetScript("OnEnter", function() charFrame.highlight:Show() end)
+        charFrame.frame:SetScript("OnLeave", function() charFrame.highlight:Hide() end)
+
+        local charHeading = AceGUI:Create("Label")
+        charHeading:SetText(charTable.char)        
+        charHeading:SetColor(r, g, b)
+        charHeading:SetJustifyH("LEFT")
+        charHeading:SetJustifyV("CENTER")
+        charHeading:SetFont(_G.STANDARD_TEXT_FONT, 14)
+        
+        charFrame:AddChild(charHeading)
+        for i = 375, 382 do
+            --local cr, cg, cb = GetCovenantColorCode(i)
+            local covBtn = AceGUI:Create("Label")
+            covBtn:SetText(charTable.data.mplus[i].fortified)
+            covBtn:SetJustifyH("MIDDLE")
+            covBtn:SetJustifyV("CENTER")
+            covBtn:SetFont(_G.STANDARD_TEXT_FONT, 14)
+            if charTable.data.mplus[i].fortified ~= "N/A" then
+                covBtn:SetColor(1, 1, 1)
+            else
+                covBtn:SetColor(0.3, 0.3, 0.3)
+            end
+            charFrame:AddChild(covBtn)
+        end
+        charFrame:SetLayout("Flow")
+        charFrame:SetFullWidth(true)
+        charFrame:SetHeight(26)  
+        scrollFrame:AddChild(charFrame)
+    end
+    scrollFrame:SetFullWidth(true)
+    scrollFrame:SetLayout("Flow")
+    scrollFrame:ResumeLayout()
+    scrollFrame:DoLayout()
+    return scrollFrame
+end
+
+local function DrawFortifiedGroup(container)    
+    local renownGroup = AceGUI:Create("SimpleGroup")
+    renownGroup.frame:ClearBackdrop()
+    container:PauseLayout()
+    
+    local blankLabel = AceGUI:Create("Label")
+    blankLabel:SetText(" ")
+
+    local kyrianIcon = AceGUI:Create("Icon")
+    kyrianIcon:SetImage(3257748)
+    kyrianIcon:SetImageSize(iconSize, iconSize)
+    kyrianIcon:SetLabel("Kyrian")
+
+    local venthyrIcon = AceGUI:Create("Icon")
+    venthyrIcon:SetImage(3257751)
+    venthyrIcon:SetImageSize(iconSize, iconSize)
+    venthyrIcon:SetLabel("Venthyr")
+
+    local faeIcon = AceGUI:Create("Icon")
+    faeIcon:SetImage(3257750)
+    faeIcon:SetImageSize(iconSize, iconSize)
+    faeIcon:SetLabel("Night Fae")
+
+    local necroIcon = AceGUI:Create("Icon")
+    necroIcon:SetImage(3257749)
+    necroIcon:SetImageSize(iconSize, iconSize)
+    necroIcon:SetLabel("Necrolord")
+    
+    local scrollContainer = AceGUI:Create("InlineGroup")
+    scrollContainer:SetFullWidth(true)
+    scrollContainer:SetFullHeight(true)
+    scrollContainer:SetLayout("Fill")
+
+    local scroll = SRT:GetFortifiedData()
+    scrollContainer:AddChild(scroll)
+
+    renownGroup:AddChild(blankLabel)
+    renownGroup:AddChild(kyrianIcon)
+    renownGroup:AddChild(venthyrIcon)
+    renownGroup:AddChild(faeIcon)
+    renownGroup:AddChild(necroIcon)
+    renownGroup:SetFullWidth(true)
+    renownGroup:SetHeight(iconSize)
+
+    renownGroup:SetLayout("RenownHeaderFrameRows")
+
+    container:AddChild(renownGroup)
+    container:AddChild(scrollContainer)
+    container:ResumeLayout()
+    container:DoLayout()    
+end
+
+function SRT:GetRenownData()
+    local scrollFrame = AceGUI:Create("ScrollFrame")
+    scrollFrame:PauseLayout()
     --[[
         covenant ids
         1 - Kyrian
@@ -304,12 +465,15 @@ function SRT:GetScrollData()
     end
     scrollFrame:SetFullWidth(true)
     scrollFrame:SetLayout("Flow")
+    scrollFrame:ResumeLayout()
+    scrollFrame:DoLayout()
     return scrollFrame
 end
 
-local function DrawRenownGroup(container)
-    container:PauseLayout()
+local function DrawRenownGroup(container)    
     local renownGroup = AceGUI:Create("SimpleGroup")
+    renownGroup.frame:ClearBackdrop()
+    container:PauseLayout()
     
     local blankLabel = AceGUI:Create("Label")
     blankLabel:SetText(" ")
@@ -333,16 +497,13 @@ local function DrawRenownGroup(container)
     necroIcon:SetImage(3257749)
     necroIcon:SetImageSize(iconSize, iconSize)
     necroIcon:SetLabel("Necrolord")
-
-    
-
     
     local scrollContainer = AceGUI:Create("InlineGroup")
     scrollContainer:SetFullWidth(true)
     scrollContainer:SetFullHeight(true)
     scrollContainer:SetLayout("Fill")
 
-    local scroll = SRT:GetScrollData()
+    local scroll = SRT:GetRenownData()
     scrollContainer:AddChild(scroll)
 
     renownGroup:AddChild(blankLabel)
@@ -352,20 +513,21 @@ local function DrawRenownGroup(container)
     renownGroup:AddChild(necroIcon)
     renownGroup:SetFullWidth(true)
     renownGroup:SetHeight(iconSize)
-    renownGroup.frame:ClearBackdrop()
+
     renownGroup:SetLayout("RenownHeaderFrameRows")
 
     container:AddChild(renownGroup)
     container:AddChild(scrollContainer)
     container:ResumeLayout()
-    container:DoLayout()
-    
+    container:DoLayout()    
 end
 
 local function SelectGroup(container, event, group)
     container:ReleaseChildren()
     if group == "renownTab" then
         DrawRenownGroup(container)
+    elseif group == "fortifiedTab" then
+        DrawFortifiedGroup(container)
     end
     SRT.currTab = group
 end
@@ -386,15 +548,25 @@ function SRT:OpenWindow()
 
     self.nameRow = AceGUI:Create("Dropdown")
     self.nameRow:SetLabel("Realm")
-    self.nameRow:SetText(self.currRealm)
+    self.nameRow:SetText(self.currRealm)  
+    self.nameRow:SetMultiselect(false)
+    self.nameRow.text:SetJustifyH("LEFT")
     self.nameRow:SetList(self:GetDropdownData())
-    self.nameRow:SetCallback("OnValueChanged", function(valueTable) 
+    self.nameRow:SetCallback("OnValueChanged", function(valueTable, null, value)
         self.currRealm = valueTable.text:GetText()
+        self.nameRow:SetValue(value)
         SelectGroup(self.tabGroup, nil, self.currTab)
     end)
+ 
+    local realmIdx = 1
+    for k, v in ipairs(self.nameRow.list) do
+         if v == self.currRealm then
+            realmIdx = k
+         end
+    end
+    self.nameRow:SetValue(realmIdx)
 
-    self.container:AddChild(self.nameRow)
-    
+    self.container:AddChild(self.nameRow)    
 
     self.tabGroup = AceGUI:Create("TabGroup")
     self.tabGroup:SetLayout("Flow")
@@ -409,8 +581,6 @@ function SRT:OpenWindow()
     
     self.tabGroup:SetCallback("OnGroupSelected", SelectGroup)
     self.tabGroup:SelectTab("renownTab") 
-    
-
 
     self.container:AddChild(self.tabGroup)
 
