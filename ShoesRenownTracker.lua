@@ -10,16 +10,66 @@ local COVENANT_COLORS = _G.COVENANT_COLORS
 local RAID_CLASS_COLORS = _G.RAID_CLASS_COLORS
 
 local dungeonData = {
-    {id = 381, name = "SOA", color = {COVENANT_COLORS[1]:GetRGB()}},
-    {id = 376, name = "NW", color = {COVENANT_COLORS[1]:GetRGB()}},
-    {id = 378, name = "HOA", color = {COVENANT_COLORS[2]:GetRGB()}},
-    {id = 380, name = "SD", color = {COVENANT_COLORS[2]:GetRGB()}},
-    {id = 375, name = "MOTS", color = {COVENANT_COLORS[3]:GetRGB()}},    
-    {id = 377, name = "DOS", color = {COVENANT_COLORS[3]:GetRGB()}},    
-    {id = 379, name = "PF", color = {COVENANT_COLORS[4]:GetRGB()}},    
-    {id = 382, name = "TOP", color = {COVENANT_COLORS[4]:GetRGB()}},
-    {id = 391, name = "TAZ1", color = {1, 1, 0}},
-    {id = 392, name = "TAZ2", color = {1, 1, 0}}
+    {
+        id = 381, 
+        name = "SOA", 
+        color = {COVENANT_COLORS[1]:GetRGB()},
+        icon = 3759933
+    },
+    {
+        id = 376, 
+        name = "NW", 
+        color = {COVENANT_COLORS[1]:GetRGB()}, 
+        icon = 3759930
+    },
+    {
+        id = 378, 
+        name = "HOA", 
+        color = {COVENANT_COLORS[2]:GetRGB()},
+        icon = 3759928
+    },
+    {
+        id = 380, 
+        name = "SD", 
+        color = {COVENANT_COLORS[2]:GetRGB()},
+        icon = 3759932
+    },
+    {
+        id = 375, 
+        name = "MOTS", 
+        color = {COVENANT_COLORS[3]:GetRGB()},
+        icon = 3759929
+    },    
+    {
+        id = 377, 
+        name = "DOS", 
+        color = {COVENANT_COLORS[3]:GetRGB()},
+        icon = 3759935
+    },    
+    {
+        id = 379, 
+        name = "PF", 
+        color = {COVENANT_COLORS[4]:GetRGB()},
+        icon = 3759931
+    },    
+    {
+        id = 382, 
+        name = "TOP", 
+        color = {COVENANT_COLORS[4]:GetRGB()},
+        icon = 3759934
+    },
+    {
+        id = 391, 
+        name = "TAZ1", 
+        color = {1, 1, 0},
+        icon = 134400 --question mark icon
+    },
+    {
+        id = 392, 
+        name = "TAZ2", 
+        color = {1, 1, 0},
+        icon = 134400 --question mark icon
+    }
 }
 
 local defaults = {
@@ -131,6 +181,22 @@ local function GetClassColor(class)
     return r, g, b
 end
 
+local function RefreshMPlusData(charName, charRealm)
+    for k, v in ipairs(dungeonData) do
+        local mapData = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(v.id)     
+        if mapData then
+            for i, j in ipairs(mapData) do
+                if mapData[i].name == "Fortified" then
+                    self.db.global.chars[charRealm][charName].mplus[v.id].fortified = mapData[i].level
+                end
+                if mapData[i].name == "Tyrannical" then
+                    self.db.global.chars[charRealm][charName].mplus[v.id].tyrannical = mapData[i].level
+                end
+            end
+        end
+    end
+end
+
 function SRT:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("ShoesRenownTrackerDB", defaults, true)   
 
@@ -139,6 +205,8 @@ function SRT:OnInitialize()
     self:RegisterEvent("COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED")
     self:RegisterEvent("GOSSIP_CONFIRM")
     self:RegisterEvent("PLAYER_CHOICE_UPDATE")
+    self:RegisterEvent("CHALLENGE_MODE_COMPLETED")
+    self:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
     self:RegisterChatCommand("srt", "SlashCommands")
 end
 
@@ -227,6 +295,16 @@ function SRT:AddData(charName, charRealm)
             end
         end
     end
+end
+
+function SRT:CHALLENGE_MODE_COMPLETED(event)
+    local charName, charRealm = GetCharName()
+    RefreshMPlusData(charName, charRealm)
+end
+
+function SRT:CHALLENGE_MODE_MAPS_UPDATE(event)
+    local charName, charRealm = GetCharName()
+    RefreshMPlusData(charName, charRealm)
 end
 
 function SRT:GOSSIP_CONFIRM(event, _, gossipText)
@@ -498,14 +576,22 @@ local function DrawMPlusGroup(container, flag)
     blankLabel:SetJustifyV("MIDDLE")
     mplusHeader:AddChild(blankLabel)
 
+    -- for k, v in ipairs(dungeonData) do
+    --     local mplusLabel = AceGUI:Create("Label")
+    --     mplusLabel:SetText(v.name)        
+    --     mplusLabel:SetColor(unpack(v.color))
+    --     mplusLabel:SetJustifyH("CENTER")
+    --     mplusLabel:SetJustifyV("MIDDLE")
+    --     mplusLabel:SetFont(_G.STANDARD_TEXT_FONT, 14)
+    --     mplusHeader:AddChild(mplusLabel)
+    -- end
     for k, v in ipairs(dungeonData) do
-        local mplusLabel = AceGUI:Create("Label")
-        mplusLabel:SetText(v.name)        
-        mplusLabel:SetColor(unpack(v.color))
-        mplusLabel:SetJustifyH("CENTER")
-        mplusLabel:SetJustifyV("MIDDLE")
-        mplusLabel:SetFont(_G.STANDARD_TEXT_FONT, 14)
-        mplusHeader:AddChild(mplusLabel)
+        local mplusIcon = AceGUI:Create("Icon")
+        mplusIcon:SetImage(v.icon)
+        mplusIcon:SetImageSize(iconSize, iconSize)
+        mplusIcon:SetLabel(v.name)
+        mplusIcon.label:SetTextColor(unpack(v.color))
+        mplusHeader:AddChild(mplusIcon)
     end
     
     local scrollContainer = AceGUI:Create("InlineGroup")
@@ -517,7 +603,7 @@ local function DrawMPlusGroup(container, flag)
     scrollContainer:AddChild(scroll)
 
     mplusHeader:SetFullWidth(true)
-    mplusHeader:SetHeight(10) 
+    mplusHeader:SetHeight(iconSize) 
     mplusHeader:SetLayout("MPlusHeaderFrameRows")
 
     for i = 1, mplusHeader.frame:GetNumChildren() do
