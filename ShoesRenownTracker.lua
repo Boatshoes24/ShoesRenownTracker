@@ -746,6 +746,12 @@ function SRT:OpenWindow()
         local charName, charRealm = GetCharName()
         self.currRealm = charRealm
     end)
+
+    if not _G.ShoesRenownTrackerFrame then
+        _G.ShoesRenownTrackerFrame = self.container.frame 
+        tinsert(UISpecialFrames, "ShoesRenownTrackerFrame")
+    end
+
     self.container:SetTitle("Shoes Renown Tracker - Dev")
     self.container:SetLayout("Flow") 
     self.container:SetHeight(600)
