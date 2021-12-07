@@ -9,7 +9,6 @@ local isOpen = false
 local COVENANT_COLORS = _G.COVENANT_COLORS
 local RAID_CLASS_COLORS = _G.RAID_CLASS_COLORS
 
-
 local dungeonData = {
     {id = 381, name = "SOA", color = {COVENANT_COLORS[1]:GetRGB()}},
     {id = 376, name = "NW", color = {COVENANT_COLORS[1]:GetRGB()}},
@@ -214,6 +213,20 @@ function SRT:AddData(charName, charRealm)
         name = covenantData.name,
         renown = renownLevel,
     }
+
+    for k, v in ipairs(dungeonData) do
+        local mapData = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(v.id)     
+        if mapData then
+            for i, j in ipairs(mapData) do
+                if mapData[i].name == "Fortified" then
+                    self.db.global.chars[charRealm][charName].mplus[v.id].fortified = mapData[i].level
+                end
+                if mapData[i].name == "Tyrannical" then
+                    self.db.global.chars[charRealm][charName].mplus[v.id].tyrannical = mapData[i].level
+                end
+            end
+        end
+    end
 end
 
 function SRT:GOSSIP_CONFIRM(event, _, gossipText)
@@ -425,9 +438,19 @@ function SRT:GetMPlusData(flag)
                 keyLevelLabel:SetJustifyV("MIDDLE")
                 keyLevelLabel:SetFont(_G.STANDARD_TEXT_FONT, 14)
                 if charTable.data.mplus[v.id].fortified ~= "N/A" then
-                    keyLevelLabel:SetColor(1, 1, 1)
+                    if charTable.data.mplus[v.id].fortified < 20 then
+                        keyLevelLabel:SetColor(0.76, 0.09, 1)
+                    elseif charTable.data.mplus[v.id].fortified < 15 then
+                        keyLevelLabel:SetColor(0.09, 0.51, 1)
+                    elseif charTable.data.mplus[v.id].fortified < 10 then
+                        keyLevelLabel:SetColor(0.09, 1, 0.44)
+                    elseif charTable.data.mplus[v.id].fortified < 5 then
+                        keyLevelLabel:SetColor(0.47, 0.47, 0.47)
+                    else
+                        keyLevelLabel:SetColor(1, 0.59, 0.09)
+                    end
                 else
-                    keyLevelLabel:SetColor(0.3, 0.3, 0.3)
+                    keyLevelLabel:SetColor(0.29, 0.29, 0.29)
                 end
             elseif flag == "tyrannical" then
                 keyLevelLabel:SetText(charTable.data.mplus[v.id].tyrannical)
@@ -435,9 +458,19 @@ function SRT:GetMPlusData(flag)
                 keyLevelLabel:SetJustifyV("MIDDLE")
                 keyLevelLabel:SetFont(_G.STANDARD_TEXT_FONT, 14)
                 if charTable.data.mplus[v.id].tyrannical ~= "N/A" then
-                    keyLevelLabel:SetColor(1, 1, 1)
+                    if charTable.data.mplus[v.id].tyrannical < 20 then
+                        keyLevelLabel:SetColor(0.76, 0.09, 1)
+                    elseif charTable.data.mplus[v.id].tyrannical < 15 then
+                        keyLevelLabel:SetColor(0.09, 0.51, 1)
+                    elseif charTable.data.mplus[v.id].tyrannical < 10 then
+                        keyLevelLabel:SetColor(0.09, 1, 0.44)
+                    elseif charTable.data.mplus[v.id].tyrannical < 5 then
+                        keyLevelLabel:SetColor(0.47, 0.47, 0.47)
+                    else
+                        keyLevelLabel:SetColor(1, 0.59, 0.09)
+                    end
                 else
-                    keyLevelLabel:SetColor(0.3, 0.3, 0.3)
+                    keyLevelLabel:SetColor(0.29, 0.29, 0.29)
                 end
             end
             charFrame:AddChild(keyLevelLabel)
@@ -613,7 +646,7 @@ function SRT:GetRenownData()
             if charTable.data.covenants[i].renown ~= "N/A" then
                 covBtn:SetColor(cr, cg, cb)
             else
-                covBtn:SetColor(0.3, 0.3, 0.3)
+                covBtn:SetColor(0.29, 0.29, 0.29)
             end
             charFrame:AddChild(covBtn)
         end
