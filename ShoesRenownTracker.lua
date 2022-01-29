@@ -62,13 +62,13 @@ local dungeonData = {
         id = 391, 
         name = "TAZ1", 
         color = {1, 1, 0},
-        icon = 134400 --question mark icon
+        icon = 4181531 
     },
     {
         id = 392, 
         name = "TAZ2", 
         color = {1, 1, 0},
-        icon = 134400 --question mark icon
+        icon = 4181531 
     }
 }
 
@@ -181,22 +181,6 @@ local function GetClassColor(class)
     return r, g, b
 end
 
-local function RefreshMPlusData(charName, charRealm)
-    for k, v in ipairs(dungeonData) do
-        local mapData = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(v.id)     
-        if mapData then
-            for i, j in ipairs(mapData) do
-                if mapData[i].name == "Fortified" then
-                    self.db.global.chars[charRealm][charName].mplus[v.id].fortified = mapData[i].level
-                end
-                if mapData[i].name == "Tyrannical" then
-                    self.db.global.chars[charRealm][charName].mplus[v.id].tyrannical = mapData[i].level
-                end
-            end
-        end
-    end
-end
-
 function SRT:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("ShoesRenownTrackerDB", defaults, true)   
 
@@ -299,12 +283,28 @@ end
 
 function SRT:CHALLENGE_MODE_COMPLETED(event)
     local charName, charRealm = GetCharName()
-    RefreshMPlusData(charName, charRealm)
+    self:RefreshMPlusData(charName, charRealm)
 end
 
 function SRT:CHALLENGE_MODE_MAPS_UPDATE(event)
     local charName, charRealm = GetCharName()
-    RefreshMPlusData(charName, charRealm)
+    self:RefreshMPlusData(charName, charRealm)
+end
+
+function SRT:RefreshMPlusData(charName, charRealm)
+    for k, v in ipairs(dungeonData) do
+        local mapData = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(v.id)     
+        if mapData then
+            for i, j in ipairs(mapData) do
+                if mapData[i].name == "Fortified" then
+                    self.db.global.chars[charRealm][charName].mplus[v.id].fortified = mapData[i].level
+                end
+                if mapData[i].name == "Tyrannical" then
+                    self.db.global.chars[charRealm][charName].mplus[v.id].tyrannical = mapData[i].level
+                end
+            end
+        end
+    end
 end
 
 function SRT:GOSSIP_CONFIRM(event, _, gossipText)
@@ -838,7 +838,7 @@ function SRT:OpenWindow()
         tinsert(UISpecialFrames, "ShoesRenownTrackerFrame")
     end
 
-    self.container:SetTitle("Shoes Renown Tracker - Dev")
+    self.container:SetTitle("Shoes Renown Tracker")
     self.container:SetLayout("Flow") 
     self.container:SetHeight(600)
     self.container:SetWidth(800)
