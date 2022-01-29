@@ -209,16 +209,14 @@ function SRT:SlashCommands(input)
 end
 
 function SRT:PLAYER_LOGIN()
+    local charName, charRealm = GetCharName()
+    self.currRealm = charRealm
 
     local covID = C_Covenants.GetActiveCovenantID()
     if covID == 0 then
         self:Print("No active covenant detected. Character skipped.")
     else
         self.currTab = "renownTab"
-        local charName, charRealm = GetCharName()
-
-        self.currRealm = charRealm
-
         if not self.db.global.chars[charRealm] then
             self.db.global.chars[charRealm] = {}
         end
